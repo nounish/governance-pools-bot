@@ -8,7 +8,7 @@
     "test": "ts-node ./index.test.ts"
   },
   "dependencies": {
-    "@nounish/botswarm": "file:../botswarm/dist",
+    "@federationwtf/botswarm": "^1.0.2",
     "ts-node": "^10.9.1"
   }
 }
