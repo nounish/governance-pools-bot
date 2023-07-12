@@ -1,6 +1,6 @@
 import NounsPoolABI from "./contracts/NounsPool.js";
 import NounsDAOLogicV2ABI from "./contracts/NounsDAOLogicV2.js";
-import BotSwarm from "@nounish/botswarm";
+import BotSwarm from "@federationwtf/botswarm";
 
 const { addTask, watch, read } = BotSwarm({
   NounsPool: {
