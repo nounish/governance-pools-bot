@@ -1,0 +1,14 @@
+{
+  "name": "federation-bot",
+  "version": "1.0.0",
+  "description": "An implementation of BotSwarm for Federation",
+  "type": "module",
+  "scripts": {
+    "start": "ts-node ./index.ts",
+    "test": "ts-node ./index.test.ts"
+  },
+  "dependencies": {
+    "@nounish/botswarm": "file:../botswarm/dist",
+    "ts-node": "^10.9.1"
+  }
+}
