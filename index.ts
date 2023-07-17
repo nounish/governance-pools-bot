@@ -41,8 +41,8 @@ watch(
       chain: "mainnet",
       functionName: "castVote",
       args: [event.args.propId],
-      priorityFee: 10,
-      maxBaseFeeForPriority: 25,
+      priorityFee: 15,
+      maxBaseFeeForPriority: 30,
     });
   }
 );

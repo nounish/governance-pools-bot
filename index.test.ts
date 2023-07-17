@@ -42,8 +42,6 @@ watch(
       chain: "sepolia",
       functionName: "castVote",
       args: [event.args.propId],
-      priorityFee: 10,
-      maxBaseFeeForPriority: 25,
     });
   }
 );
