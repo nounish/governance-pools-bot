@@ -3,7 +3,7 @@ import NounsPoolV2ABI from "./contracts/NounsPoolV2.js";
 import NounsDAOLogicV2ABI from "./contracts/NounsDAOLogicV2.js";
 import BotSwarm from "@federationwtf/botswarm";
 
-const { addTask, watch, read } = BotSwarm({
+const { addTask, tasks, rescheduleTask, watch, read } = BotSwarm({
   NounsPool: {
     abi: NounsPoolABI,
     deployments: {
@@ -59,27 +59,27 @@ watch(
   async (event) => {
     if (!event.args.propId) return;
 
-    const { castWindow } = await read({
+    const { auctionEndBlock } = await read({
       contract: "NounsPoolV2",
       chain: "mainnet",
-      functionName: "getConfig",
-    });
-
-    const { endBlock } = await read({
-      contract: "NounsDAOLogicV2",
-      chain: "mainnet",
-      functionName: "proposals",
+      functionName: "getBid",
       args: [event.args.propId],
     });
 
-    addTask({
-      block: endBlock - castWindow,
-      contract: "NounsPoolV2",
-      chain: "mainnet",
-      functionName: "castVote",
-      args: [event.args.propId],
-      priorityFee: 15,
-      maxBaseFeeForPriority: 30,
-    });
+    const task = tasks().find((_task) => _task.args[0] === event.args.propId);
+
+    if (task && task.block !== auctionEndBlock) {
+      rescheduleTask(task.id, auctionEndBlock);
+    } else {
+      addTask({
+        block: auctionEndBlock,
+        contract: "NounsPoolV2",
+        chain: "mainnet",
+        functionName: "castVote",
+        args: [event.args.propId],
+        priorityFee: 15,
+        maxBaseFeeForPriority: 30,
+      });
+    }
   }
 );
