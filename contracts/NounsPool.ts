@@ -1,41 +1,180 @@
 export default [
-  { inputs: [], stateMutability: "nonpayable", type: "constructor" },
-  { inputs: [], name: "BidAuctionEnded", type: "error" },
-  { inputs: [], name: "BidInvalidSupport", type: "error" },
-  { inputs: [], name: "BidMaxBidExceeded", type: "error" },
-  { inputs: [], name: "BidModulePaused", type: "error" },
-  { inputs: [], name: "BidProposalNotActive", type: "error" },
-  { inputs: [], name: "BidReserveNotMet", type: "error" },
-  { inputs: [], name: "BidTooLow", type: "error" },
-  { inputs: [], name: "BidVoteAlreadyCast", type: "error" },
-  { inputs: [], name: "CastVoteAlreadyCast", type: "error" },
-  { inputs: [], name: "CastVoteBidDoesNotExist", type: "error" },
-  { inputs: [], name: "CastVoteMustWait", type: "error" },
-  { inputs: [], name: "CastVoteNoDelegations", type: "error" },
-  { inputs: [], name: "CastVoteNotInWindow", type: "error" },
-  { inputs: [], name: "ClaimAlreadyRefunded", type: "error" },
-  { inputs: [], name: "ClaimNotRefundable", type: "error" },
-  { inputs: [], name: "ClaimOnlyBidder", type: "error" },
-  { inputs: [], name: "ConfigModuleHasActiveLock", type: "error" },
-  { inputs: [], name: "InitBaseWalletNotSet", type: "error" },
-  { inputs: [], name: "InitCastWindowNotSet", type: "error" },
-  { inputs: [], name: "InitExternalDAONotSet", type: "error" },
-  { inputs: [], name: "InitExternalTokenNotSet", type: "error" },
-  { inputs: [], name: "InitFeeRecipientNotSet", type: "error" },
-  { inputs: [], name: "WithdrawAlreadyClaimed", type: "error" },
-  { inputs: [], name: "WithdrawBidNotOffered", type: "error" },
-  { inputs: [], name: "WithdrawBidRefunded", type: "error" },
-  { inputs: [], name: "WithdrawDelegateOrOwnerOnly", type: "error" },
   {
-    inputs: [{ internalType: "string", name: "", type: "string" }],
+    inputs: [],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
+    inputs: [],
+    name: "BidAuctionEnded",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "BidInvalidSupport",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "BidMaxBidExceeded",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "BidModulePaused",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "BidNoAuction",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "BidProposalNotActive",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "BidReserveNotMet",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "BidTooLow",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "BidVoteAlreadyCast",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "CastVoteAlreadyCast",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "CastVoteBidDoesNotExist",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "CastVoteNoDelegations",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "CastVoteNotInWindow",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ClaimAlreadyRefunded",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ClaimNotRefundable",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ClaimOnlyBidder",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ConfigModuleHasActiveLock",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InitAuctionCloseBlocksNotSet",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InitBaseWalletNotSet",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InitCastWindowNotSet",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InitExternalDAONotSet",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InitExternalTokenNotSet",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InitFeeRecipientNotSet",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "WithdrawAlreadyClaimed",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "WithdrawBidNotOffered",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "WithdrawBidRefunded",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "WithdrawDelegateOrOwnerOnly",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
     name: "WithdrawInvalidProof",
     type: "error",
   },
-  { inputs: [], name: "WithdrawMaxProverVersion", type: "error" },
-  { inputs: [], name: "WithdrawNoBalanceAtPropStart", type: "error" },
-  { inputs: [], name: "WithdrawNoTokensDelegated", type: "error" },
-  { inputs: [], name: "WithdrawPropIsActive", type: "error" },
-  { inputs: [], name: "WithdrawVoteNotCast", type: "error" },
+  {
+    inputs: [],
+    name: "WithdrawMaxProverVersion",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "WithdrawNoBalanceAtPropStart",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "WithdrawNoTokensDelegated",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "WithdrawPropIsActive",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "WithdrawVoteNotCast",
+    type: "error",
+  },
   {
     anonymous: false,
     inputs: [
@@ -68,6 +207,12 @@ export default [
         internalType: "address",
         name: "bidder",
         type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "reason",
+        type: "string",
       },
     ],
     name: "BidPlaced",
@@ -302,35 +447,72 @@ export default [
   {
     inputs: [],
     name: "MAX_REFUND_GAS_USED",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "MAX_REFUND_PRIORITY_FEE",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "REFUND_BASE_GAS",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "balanceSlotIdx",
-    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      { internalType: "uint256", name: "_pId", type: "uint256" },
-      { internalType: "uint256", name: "_support", type: "uint256" },
+      {
+        internalType: "uint256",
+        name: "_pId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_support",
+        type: "uint256",
+      },
+      {
+        internalType: "string",
+        name: "_reason",
+        type: "string",
+      },
     ],
     name: "bid",
     outputs: [],
@@ -338,14 +520,26 @@ export default [
     type: "function",
   },
   {
-    inputs: [{ internalType: "uint256", name: "_pId", type: "uint256" }],
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_pId",
+        type: "uint256",
+      },
+    ],
     name: "castVote",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [{ internalType: "uint256", name: "_pId", type: "uint256" }],
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_pId",
+        type: "uint256",
+      },
+    ],
     name: "claimRefund",
     outputs: [],
     stateMutability: "nonpayable",
@@ -354,17 +548,33 @@ export default [
   {
     inputs: [],
     name: "delegateSlotIdx",
-    outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{ internalType: "uint256", name: "_pId", type: "uint256" }],
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_pId",
+        type: "uint256",
+      },
+    ],
     name: "getBid",
     outputs: [
       {
         components: [
-          { internalType: "uint256", name: "amount", type: "uint256" },
+          {
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+          },
           {
             internalType: "uint256",
             name: "remainingAmount",
@@ -385,12 +595,36 @@ export default [
             name: "startBlock",
             type: "uint256",
           },
-          { internalType: "uint256", name: "endBlock", type: "uint256" },
-          { internalType: "uint256", name: "bidBlock", type: "uint256" },
-          { internalType: "uint256", name: "support", type: "uint256" },
-          { internalType: "address", name: "bidder", type: "address" },
-          { internalType: "bool", name: "executed", type: "bool" },
-          { internalType: "bool", name: "refunded", type: "bool" },
+          {
+            internalType: "uint256",
+            name: "endBlock",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "auctionEndBlock",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "support",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "bidder",
+            type: "address",
+          },
+          {
+            internalType: "bool",
+            name: "executed",
+            type: "bool",
+          },
+          {
+            internalType: "bool",
+            name: "refunded",
+            type: "bool",
+          },
         ],
         internalType: "struct GovernancePool.Bid",
         name: "",
@@ -406,7 +640,11 @@ export default [
     outputs: [
       {
         components: [
-          { internalType: "address", name: "base", type: "address" },
+          {
+            internalType: "address",
+            name: "base",
+            type: "address",
+          },
           {
             internalType: "address",
             name: "externalDAO",
@@ -429,7 +667,7 @@ export default [
           },
           {
             internalType: "uint256",
-            name: "castWaitBlocks",
+            name: "timeBuffer",
             type: "uint256",
           },
           {
@@ -442,8 +680,21 @@ export default [
             name: "castWindow",
             type: "uint256",
           },
-          { internalType: "uint256", name: "tip", type: "uint256" },
-          { internalType: "uint256", name: "feeBPS", type: "uint256" },
+          {
+            internalType: "uint256",
+            name: "auctionCloseBlocks",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "tip",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "feeBPS",
+            type: "uint256",
+          },
           {
             internalType: "uint256",
             name: "maxBaseFeeRefund",
@@ -454,8 +705,16 @@ export default [
             name: "maxProverVersion",
             type: "uint256",
           },
-          { internalType: "address", name: "reliquary", type: "address" },
-          { internalType: "address", name: "dcash", type: "address" },
+          {
+            internalType: "address",
+            name: "reliquary",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "dcash",
+            type: "address",
+          },
           {
             internalType: "address",
             name: "factValidator",
@@ -466,7 +725,16 @@ export default [
             name: "useStartBlockFromPropId",
             type: "uint256",
           },
-          { internalType: "string", name: "reason", type: "string" },
+          {
+            internalType: "string",
+            name: "reason",
+            type: "string",
+          },
+          {
+            internalType: "uint256",
+            name: "migrationPropId",
+            type: "uint256",
+          },
         ],
         internalType: "struct ModuleConfig.Config",
         name: "",
@@ -477,30 +745,60 @@ export default [
     type: "function",
   },
   {
-    inputs: [{ internalType: "bytes", name: "_data", type: "bytes" }],
+    inputs: [
+      {
+        internalType: "bytes",
+        name: "_data",
+        type: "bytes",
+      },
+    ],
     name: "init",
     outputs: [],
     stateMutability: "payable",
     type: "function",
   },
   {
-    inputs: [{ internalType: "uint256", name: "_pid", type: "uint256" }],
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_pid",
+        type: "uint256",
+      },
+    ],
     name: "minBidAmount",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "name",
-    outputs: [{ internalType: "string", name: "", type: "string" }],
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "owner",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
@@ -514,7 +812,13 @@ export default [
   {
     inputs: [],
     name: "paused",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
@@ -527,9 +831,21 @@ export default [
   },
   {
     inputs: [
-      { internalType: "address", name: "_reliquary", type: "address" },
-      { internalType: "address", name: "_delegateCash", type: "address" },
-      { internalType: "address", name: "_factValidator", type: "address" },
+      {
+        internalType: "address",
+        name: "_reliquary",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_delegateCash",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_factValidator",
+        type: "address",
+      },
     ],
     name: "setAddresses",
     outputs: [],
@@ -537,7 +853,31 @@ export default [
     type: "function",
   },
   {
-    inputs: [{ internalType: "uint256", name: "_castWindow", type: "uint256" }],
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_timeBuffer",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_auctionCloseBlocks",
+        type: "uint256",
+      },
+    ],
+    name: "setAuctionSettings",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_castWindow",
+        type: "uint256",
+      },
+    ],
     name: "setCastWindow",
     outputs: [],
     stateMutability: "nonpayable",
@@ -547,7 +887,11 @@ export default [
     inputs: [
       {
         components: [
-          { internalType: "address", name: "base", type: "address" },
+          {
+            internalType: "address",
+            name: "base",
+            type: "address",
+          },
           {
             internalType: "address",
             name: "externalDAO",
@@ -570,7 +914,7 @@ export default [
           },
           {
             internalType: "uint256",
-            name: "castWaitBlocks",
+            name: "timeBuffer",
             type: "uint256",
           },
           {
@@ -583,8 +927,21 @@ export default [
             name: "castWindow",
             type: "uint256",
           },
-          { internalType: "uint256", name: "tip", type: "uint256" },
-          { internalType: "uint256", name: "feeBPS", type: "uint256" },
+          {
+            internalType: "uint256",
+            name: "auctionCloseBlocks",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "tip",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "feeBPS",
+            type: "uint256",
+          },
           {
             internalType: "uint256",
             name: "maxBaseFeeRefund",
@@ -595,8 +952,16 @@ export default [
             name: "maxProverVersion",
             type: "uint256",
           },
-          { internalType: "address", name: "reliquary", type: "address" },
-          { internalType: "address", name: "dcash", type: "address" },
+          {
+            internalType: "address",
+            name: "reliquary",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "dcash",
+            type: "address",
+          },
           {
             internalType: "address",
             name: "factValidator",
@@ -607,7 +972,16 @@ export default [
             name: "useStartBlockFromPropId",
             type: "uint256",
           },
-          { internalType: "string", name: "reason", type: "string" },
+          {
+            internalType: "string",
+            name: "reason",
+            type: "string",
+          },
+          {
+            internalType: "uint256",
+            name: "migrationPropId",
+            type: "uint256",
+          },
         ],
         internalType: "struct ModuleConfig.Config",
         name: "_config",
@@ -620,21 +994,57 @@ export default [
     type: "function",
   },
   {
-    inputs: [{ internalType: "uint256", name: "_feeBPS", type: "uint256" }],
-    name: "setFeeBPS",
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_feeBPS",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_feeRecipient",
+        type: "address",
+      },
+    ],
+    name: "setFee",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [{ internalType: "uint256", name: "_version", type: "uint256" }],
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_version",
+        type: "uint256",
+      },
+    ],
     name: "setMaxProverVersion",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [{ internalType: "string", name: "_reason", type: "string" }],
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_migrationPropId",
+        type: "uint256",
+      },
+    ],
+    name: "setMigrationPropId",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_reason",
+        type: "string",
+      },
+    ],
     name: "setReason",
     outputs: [],
     stateMutability: "nonpayable",
@@ -642,7 +1052,11 @@ export default [
   },
   {
     inputs: [
-      { internalType: "uint256", name: "_reservePrice", type: "uint256" },
+      {
+        internalType: "uint256",
+        name: "_reservePrice",
+        type: "uint256",
+      },
     ],
     name: "setReservePrice",
     outputs: [],
@@ -651,8 +1065,16 @@ export default [
   },
   {
     inputs: [
-      { internalType: "uint256", name: "balanceSlot", type: "uint256" },
-      { internalType: "uint256", name: "delegateSlot", type: "uint256" },
+      {
+        internalType: "uint256",
+        name: "balanceSlot",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "delegateSlot",
+        type: "uint256",
+      },
     ],
     name: "setSlots",
     outputs: [],
@@ -661,7 +1083,11 @@ export default [
   },
   {
     inputs: [
-      { internalType: "uint256", name: "_tip", type: "uint256" },
+      {
+        internalType: "uint256",
+        name: "_tip",
+        type: "uint256",
+      },
       {
         internalType: "uint256",
         name: "_maxBaseFeeRefund",
@@ -674,14 +1100,26 @@ export default [
     type: "function",
   },
   {
-    inputs: [{ internalType: "uint256", name: "_pId", type: "uint256" }],
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_pId",
+        type: "uint256",
+      },
+    ],
     name: "setUseStartBlockFromPropId",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
+    inputs: [
+      {
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
     name: "transferOwnership",
     outputs: [],
     stateMutability: "nonpayable",
@@ -696,24 +1134,64 @@ export default [
   },
   {
     inputs: [
-      { internalType: "address", name: "_tokenOwner", type: "address" },
-      { internalType: "address", name: "_prover", type: "address" },
-      { internalType: "uint256[]", name: "_pIds", type: "uint256[]" },
-      { internalType: "uint256[]", name: "_fee", type: "uint256[]" },
-      { internalType: "bytes[]", name: "_proofBatches", type: "bytes[]" },
+      {
+        internalType: "address",
+        name: "_tokenOwner",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_prover",
+        type: "address",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_pIds",
+        type: "uint256[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_fee",
+        type: "uint256[]",
+      },
+      {
+        internalType: "bytes[]",
+        name: "_proofBatches",
+        type: "bytes[]",
+      },
     ],
     name: "withdraw",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     stateMutability: "payable",
     type: "function",
   },
   {
     inputs: [
-      { internalType: "uint256", name: "_pId", type: "uint256" },
-      { internalType: "address", name: "_account", type: "address" },
+      {
+        internalType: "uint256",
+        name: "_pId",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_account",
+        type: "address",
+      },
     ],
     name: "withdrawn",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
