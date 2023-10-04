@@ -1,47 +1,79 @@
-import NounsPoolABI from "./contracts/NounsPool.js";
-import NounsDAOLogicV2ABI from "./contracts/NounsDAOLogicV2.js";
-
 import BotSwarm from "@federationwtf/botswarm";
 
-const { addTask, watch, read } = BotSwarm({
-  NounsPool: {
-    abi: NounsPoolABI,
-    deployments: {
-      sepolia: "0xd27dfb807DC3435AC3e14b55FcF1B50F96fF769a",
-    },
-  },
-  NounsDAOLogicV2: {
-    abi: NounsDAOLogicV2ABI,
-    deployments: {
-      sepolia: "0x75D84FC49Dc8A423604BFCd46E0AB7D340D5ea38",
-    },
-  },
+import {
+  FederationNounsPool,
+  FederationNounsGovernor,
+  FederationNounsRelayer,
+} from "@federationwtf/botswarm/contracts";
+
+const { addTask, tasks, rescheduleTask, watch, read } = BotSwarm({
+  FederationNounsPool,
+  FederationNounsGovernor,
+  FederationNounsRelayer,
 });
 
+// Governance Pools
 watch(
-  { contract: "NounsPool", chain: "sepolia", event: "BidPlaced" },
+  { contract: "FederationNounsPool", chain: "sepolia", event: "BidPlaced" },
   async (event) => {
     if (!event.args.propId) return;
 
-    const { castWindow } = await read({
-      contract: "NounsPool",
+    const { auctionEndBlock } = await read({
+      contract: "FederationNounsPool",
       chain: "sepolia",
-      functionName: "getConfig",
+      functionName: "getBid",
+      args: [event.args.propId],
+    });
+
+    const task = tasks().find((_task) => _task.args[0] === event.args.propId);
+
+    if (task && task.block !== auctionEndBlock) {
+      rescheduleTask(task.id, auctionEndBlock + 1n);
+    } else {
+      addTask({
+        block: auctionEndBlock + 1n,
+        contract: "FederationNounsPool",
+        chain: "sepolia",
+        functionName: "castVote",
+        args: [event.args.propId],
+        priorityFee: 15,
+        maxBaseFeeForPriority: 30,
+      });
+    }
+  }
+);
+
+// L2 Governance
+
+// Governor
+watch(
+  {
+    contract: "FederationNounsGovernor",
+    chain: "zkSyncTestnet",
+    event: "VoteCast",
+  },
+  async (event) => {
+    if (!event.args.proposal) return;
+
+    const [, , , , , , , , , , castWindow, finalityBlocks] = await read({
+      contract: "FederationNounsGovernor",
+      chain: "zkSyncTestnet",
+      functionName: "config",
     });
 
     const { endBlock } = await read({
-      contract: "NounsDAOLogicV2",
-      chain: "sepolia",
-      functionName: "proposals",
-      args: [event.args.propId],
+      contract: "FederationNounsGovernor",
+      chain: "zkSyncTestnet",
+      functionName: "getProposal",
+      args: [event.args.proposal],
     });
 
     addTask({
-      block: endBlock - castWindow,
-      contract: "NounsPool",
-      chain: "sepolia",
-      functionName: "castVote",
-      args: [event.args.propId],
+      block: endBlock - (castWindow + finalityBlocks),
+      contract: "FederationNounsGovernor",
+      chain: "zkSyncTestnet",
+      functionName: "settleVotes",
+      args: [event.args.proposal],
     });
   }
 );
