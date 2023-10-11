@@ -4,11 +4,10 @@
   "description": "An implementation of BotSwarm for Federation",
   "type": "module",
   "scripts": {
-    "start": "ts-node ./index.ts",
-    "test": "ts-node ./index.test.ts"
+    "start": "npx tsx ./index.ts",
+    "test": "npx tsx ./index.test.ts"
   },
   "dependencies": {
-    "@federationwtf/botswarm": "file:../botswarm/dist",
-    "ts-node": "^10.9.1"
+    "@federationwtf/botswarm": "^2.0.2"
   }
 }

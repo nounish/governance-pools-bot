@@ -6,18 +6,21 @@ import {
   FederationNounsRelayer,
 } from "@federationwtf/botswarm/contracts";
 
-const { addTask, tasks, rescheduleTask, watch, read } = BotSwarm({
-  FederationNounsPool,
-  FederationNounsGovernor,
-  FederationNounsRelayer,
+const { Ethereum } = BotSwarm();
+
+const { addTask, tasks, rescheduleTask, watch, read } = Ethereum({
+  contracts: {
+    FederationNounsPool,
+    FederationNounsGovernor,
+    FederationNounsRelayer,
+  },
+  privateKey: process.env.ETHEREUM_PRIVATE_KEY as string,
 });
 
 // Governance Pools
 watch(
   { contract: "FederationNounsPool", chain: "sepolia", event: "BidPlaced" },
   async (event) => {
-    if (!event.args.propId) return;
-
     const { auctionEndBlock } = await read({
       contract: "FederationNounsPool",
       chain: "sepolia",
@@ -53,8 +56,6 @@ watch(
     event: "VoteCast",
   },
   async (event) => {
-    if (!event.args.proposal) return;
-
     const [, , , , , , , , , , castWindow, finalityBlocks] = await read({
       contract: "FederationNounsGovernor",
       chain: "zkSyncTestnet",

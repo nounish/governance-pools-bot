@@ -1,16 +1,19 @@
 import BotSwarm from "@federationwtf/botswarm";
 import { FederationNounsPool } from "@federationwtf/botswarm/contracts";
 
-const { addTask, tasks, rescheduleTask, watch, read } = BotSwarm({
-  FederationNounsPool,
+const { Ethereum } = BotSwarm();
+
+const { addTask, tasks, rescheduleTask, watch, read } = Ethereum({
+  contracts: {
+    FederationNounsPool,
+  },
+  privateKey: process.env.ETHEREUM_PRIVATE_KEY as string,
 });
 
 // Governance Pools
 watch(
   { contract: "FederationNounsPool", chain: "mainnet", event: "BidPlaced" },
   async (event) => {
-    if (!event.args.propId) return;
-
     const { auctionEndBlock } = await read({
       contract: "FederationNounsPool",
       chain: "mainnet",

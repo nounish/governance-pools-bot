@@ -8,9 +8,5 @@
     "resolveJsonModule": true,
 
     "strict": true
-  },
-
-  "ts-node": {
-    "esm": true
   }
 }
