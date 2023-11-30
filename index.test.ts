@@ -1,18 +1,41 @@
 import BotSwarm from "@federationwtf/botswarm";
-
 import {
   FederationNounsPool,
   FederationNounsGovernor,
   FederationNounsRelayer,
 } from "@federationwtf/botswarm/contracts";
+import { RelicClient } from "@relicprotocol/client";
+import { ethers } from "ethers";
 
 const { Ethereum } = BotSwarm();
 
-const { addTask, tasks, rescheduleTask, watch, read } = Ethereum({
+const ethersProvider = new ethers.providers.JsonRpcProvider(
+  process.env.SEPOLIA_RPC_URL as string
+);
+
+const relic = await RelicClient.fromProvider(ethersProvider);
+
+const { addTask, tasks, rescheduleTask, watch, read, clients } = Ethereum({
   contracts: {
     FederationNounsPool,
     FederationNounsGovernor,
     FederationNounsRelayer,
+  },
+  hooks: {
+    getBlockProof: async (task, block) => {
+      const { blockHash } = await clients.sepolia.getTransaction({
+        blockNumber: block,
+        index: 0,
+      });
+
+      const receipt = await ethersProvider.getTransactionReceipt(blockHash);
+
+      const { proof } = await relic.transactionProver.getProofData(receipt);
+
+      task.args.push(proof);
+
+      return task;
+    },
   },
   privateKey: process.env.ETHEREUM_PRIVATE_KEY as string,
 });
@@ -56,7 +79,7 @@ watch(
     event: "VoteCast",
   },
   async (event) => {
-    const [, , , , , , , , , , castWindow, finalityBlocks] = await read({
+    const [, , , , , , , , , , , castWindow, finalityBlocks] = await read({
       contract: "FederationNounsGovernor",
       chain: "zkSyncTestnet",
       functionName: "config",
@@ -71,9 +94,30 @@ watch(
 
     addTask({
       block: endBlock - (castWindow + finalityBlocks),
+      hooks: ["getBlockProof"],
       contract: "FederationNounsGovernor",
       chain: "zkSyncTestnet",
       functionName: "settleVotes",
+      // @ts-ignore
+      args: [event.args.proposal],
+    });
+  }
+);
+
+// Relayer
+watch(
+  {
+    contract: "FederationNounsGovernor",
+    chain: "zkSyncTestnet",
+    event: "VotesSettled",
+  },
+  async (event) => {
+    addTask({
+      block: event.blockNumber,
+      hooks: ["getMessageProof"],
+      contract: "FederationNounsRelayer",
+      chain: "sepolia",
+      functionName: "relayVotes",
       args: [event.args.proposal],
     });
   }
