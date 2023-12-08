@@ -2,20 +2,26 @@ import BotSwarm from "@federationwtf/botswarm";
 import { FederationNounsPool, FederationNounsGovernor, FederationNounsRelayer } from "@federationwtf/botswarm/contracts";
 import Relic from "@relicprotocol/client";
 import { ethers } from "ethers";
+import { Provider } from "zksync-web3";
+import Base from "./contracts/Base";
+import { encodeFunctionData } from 'viem'
 
 const { Ethereum } = BotSwarm();
 
-const ethersProvider = new ethers.providers.JsonRpcProvider(
+const mainnetProvider = new ethers.providers.JsonRpcProvider(
   process.env.MAINNET_RPC_URL as string
 );
 
-const relic = await Relic.RelicClient.fromProvider(ethersProvider);
+const relic = await Relic.RelicClient.fromProvider(mainnetProvider);
 
-const { addTask, tasks, rescheduleTask, watch, read, clients } = Ethereum({
+const zkSyncProvider = new Provider(process.env.ZKSYNC_RPC_URL as string);
+
+const { addTask, tasks, rescheduleTask, watch, read, clients, contracts } = Ethereum({
   contracts: {
     FederationNounsPool,
     FederationNounsGovernor,
     FederationNounsRelayer,
+    Base
   },
   hooks: {
     getBlockProof: async (task, block) => {
@@ -24,7 +30,7 @@ const { addTask, tasks, rescheduleTask, watch, read, clients } = Ethereum({
         index: 0,
       });
 
-      const receipt = await ethersProvider.getTransactionReceipt(hash);
+      const receipt = await mainnetProvider.getTransactionReceipt(hash);
 
       const { proof } = await relic.transactionProver.getProofData(receipt);
 
@@ -32,9 +38,20 @@ const { addTask, tasks, rescheduleTask, watch, read, clients } = Ethereum({
 
       return task;
     },
-    getMessageProof: async (task, block) => {
-      // TOOD: get message proof
-      return task;
+    getMessageProof: async (task) => {
+      const messageHash = ethers.utils.keccak256(task.args[3]);
+
+      const proofInfo = await zkSyncProvider.getMessageProof(
+        task.args[5],
+        contracts.FederationNounsGovernor.deployments.zkSync,
+        messageHash
+      );
+
+      if (!proofInfo) {
+        throw new Error("No proof found");
+      }
+
+      return {...task, args: [task.args[0], proofInfo.id, task.args[2], task.args[3], proofInfo.proof]};
     },
   },
   privateKey: process.env.ETHEREUM_PRIVATE_KEY as string,
@@ -117,16 +134,38 @@ watch(
       chain: "zkSync",
       functionName: "config",
     });
-    
+
+    const {l1BatchNumber, l1BatchTxIndex, blockNumber} = await zkSyncProvider.getTransactionReceipt(event.transactionHash);
+
+    const encodedMessage = ethers.utils.AbiCoder.prototype.encode(
+      ["uint256", "uint256", "uint256", "uint256"],
+      [Number(event.args.proposal), Number(event.args.forVotes), Number(event.args.againstVotes), Number(event.args.abstainVotes)]
+    ) as `0x${string}`;
+
+    const proof = {
+      id: 0n, // Overriden by hook
+      proof: ["0xPROOF"],  // Overriden by hook
+    } as const;
+
     addTask({
       block: event.blockNumber + finalityBlocks,
       hooks: ["getMessageProof"],
-      contract: "FederationNounsRelayer",
+      contract: "Base",
       chain: "mainnet",
-      functionName: "relayVotes",
-      // TODO: add message proof stuff
-      args: [event.args.proposal],
-    });
+      functionName: "execute",
+      args: [
+        contracts.FederationNounsRelayer.deployments.mainnet,
+        0n,
+        encodeFunctionData({
+          abi: contracts.FederationNounsRelayer.abi,
+          functionName: "relayVotes",
+          //@ts-ignore
+          args: [BigInt(l1BatchNumber), proof.id, l1BatchTxIndex, encodedMessage, proof.proof, 
+            blockNumber
+          ],
+        })
+      ],
+    })
   }
 );
 

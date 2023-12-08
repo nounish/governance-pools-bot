@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@federationwtf/botswarm": "^2.1.2",
-    "@relicprotocol/client": "^0.1.0"
+    "@relicprotocol/client": "^0.1.0",
+    "zksync-web3": "^0.16.0"
   }
 }
