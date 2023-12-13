@@ -3,8 +3,6 @@ import { FederationNounsPool, FederationNounsGovernor, FederationNounsRelayer } 
 import Relic from "@relicprotocol/client";
 import { ethers } from "ethers";
 import { Provider } from "zksync-web3";
-import Base from "./contracts/Base";
-import { encodeFunctionData } from 'viem'
 
 const { Ethereum } = BotSwarm();
 
@@ -21,7 +19,6 @@ const { addTask, tasks, rescheduleTask, watch, read, clients, contracts } = Ethe
     FederationNounsPool,
     FederationNounsGovernor,
     FederationNounsRelayer,
-    Base
   },
   hooks: {
     getBlockProof: async (task, block) => {
@@ -150,22 +147,14 @@ watch(
     addTask({
       block: event.blockNumber + finalityBlocks,
       hooks: ["getMessageProof"],
-      contract: "Base",
+      contract: "FederationNounsRelayer",
       chain: "mainnet",
-      functionName: "execute",
-      args: [
-        contracts.FederationNounsRelayer.deployments.mainnet,
-        0n,
-        encodeFunctionData({
-          abi: contracts.FederationNounsRelayer.abi,
-          functionName: "relayVotes",
-          //@ts-ignore
-          args: [BigInt(l1BatchNumber), proof.id, l1BatchTxIndex, encodedMessage, proof.proof, 
-            blockNumber
-          ],
-        })
+      functionName: "relayVotes",
+      args: [BigInt(l1BatchNumber), proof.id, l1BatchTxIndex, encodedMessage, proof.proof, 
+        //@ts-ignore
+        blockNumber
       ],
-    })
+    });
   }
 );
 
