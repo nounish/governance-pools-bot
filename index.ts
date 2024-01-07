@@ -14,14 +14,17 @@ const { Ethereum, log } = BotSwarm();
 const mainnetProvider = new ethers.providers.JsonRpcProvider(
   "https://rpc.flashbots.net/"
 );
-const mainnetWallet = new ethers.Wallet(
+
+const mainnetSigner = new ethers.Wallet(
   process.env.ETHEREUM_PRIVATE_KEY as string
 );
-const mainnetSigner = mainnetWallet.connect(mainnetProvider);
 
-const relic = await Relic.RelicClient.fromProvider(mainnetProvider);
+const zkSyncProvider = new Provider("https://mainnet.era.zksync.io");
 
-const zkSyncProvider = new Provider(process.env.ZKSYNC_RPC_URL as string);
+const relic = await Relic.RelicClient.fromProviders(
+  zkSyncProvider,
+  mainnetProvider
+);
 
 const {
   addTask,
@@ -81,38 +84,49 @@ const {
     publishBlockHash: async (task) => {
       log.active(`Publishing block hash to Relic for block ${task.args[1]}`);
 
-      const relic = await Relic.RelicClient.fromProvider(mainnetProvider);
-
-      // make sure theres no reorg
       const blockHash = await mainnetProvider
         .getBlock(Number(task.args[1]))
         .then((b) => b.hash);
 
-      await mainnetSigner.sendTransaction(
+      const tx = await mainnetSigner.sendTransaction(
         await relic.bridge.sendBlock(blockHash)
-        // {} // optional gas configuration goes here
       );
 
-      await relic.bridge.waitUntilBridged(blockHash);
+      try {
+        await relic.bridge.waitUntilBridged(blockHash);
+
+        log.success(
+          `Published block hash to Relic for block ${task.args[1]} in tx ${tx.hash}`
+        );
+      } catch (e) {
+        log.error(
+          `Failed to wait for relic bridging (waiting 5 mins as a back up): ${e}`
+        );
+
+        await new Promise((resolve) => setTimeout(resolve, 300000)); // Waits for 5 minutes, tx will error and botswarm will catch it if it actually wasnt bridged
+      }
 
       return task;
     },
   },
   scripts: {
     publishBlockHash: async (block: number) => {
-      const relic = await Relic.RelicClient.fromProvider(mainnetProvider);
+      log.active(`Publishing block hash to Relic for block ${block}`);
 
-      // make sure theres no reorg
       const blockHash = await mainnetProvider
         .getBlock(block)
         .then((b) => b.hash);
 
-      await mainnetSigner.sendTransaction(
+      const tx = await mainnetSigner.sendTransaction(
         await relic.bridge.sendBlock(blockHash)
-        // {} // optional gas configuration goes here
       );
 
-      await relic.bridge.waitUntilBridged(blockHash);
+      log.success(
+        `Published block hash to Relic for block ${block} in tx ${tx.hash}`
+      );
+
+      // We dont really need to wait for it to bridge since noting else depends on this script
+      // await relic.bridge.waitUntilBridged(blockHash);
     },
   },
   privateKey: process.env.ETHEREUM_PRIVATE_KEY as string,
