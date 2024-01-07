@@ -8,8 +8,8 @@
     "test": "npx tsx ./index.test.ts"
   },
   "dependencies": {
-    "@federationwtf/botswarm": "^2.1.2",
-    "@relicprotocol/client": "^0.1.0",
+    "@federationwtf/botswarm": "^3.0.3",
+    "@relicprotocol/client": "^0.1.1",
     "zksync-web3": "^0.16.0"
   }
 }
