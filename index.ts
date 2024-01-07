@@ -1,29 +1,129 @@
-import NounsPoolABI from "./contracts/NounsPool.js";
-import NounsDAOLogicV2ABI from "./contracts/NounsDAOLogicV2.js";
 import BotSwarm from "@federationwtf/botswarm";
+import {
+  FederationNounsPool,
+  FederationNounsGovernor,
+  FederationNounsRelayer,
+  NounsDAOLogicV3,
+} from "@federationwtf/botswarm/contracts";
+import Relic from "@relicprotocol/client";
+import { ethers } from "ethers";
+import { Provider } from "zksync-web3";
 
-const { addTask, tasks, rescheduleTask, watch, read } = BotSwarm({
-  NounsPool: {
-    abi: NounsPoolABI,
-    deployments: {
-      mainnet: "0x0f722d69B3D8C292E85F2b1E5D9F4439edd58F1e",
+const { Ethereum, log } = BotSwarm();
+
+const mainnetProvider = new ethers.providers.JsonRpcProvider(
+  "https://rpc.flashbots.net/"
+);
+const mainnetWallet = new ethers.Wallet(
+  process.env.ETHEREUM_PRIVATE_KEY as string
+);
+const mainnetSigner = mainnetWallet.connect(mainnetProvider);
+
+const relic = await Relic.RelicClient.fromProvider(mainnetProvider);
+
+const zkSyncProvider = new Provider(process.env.ZKSYNC_RPC_URL as string);
+
+const {
+  addTask,
+  tasks,
+  rescheduleTask,
+  watch,
+  read,
+  clients,
+  contracts,
+  schedule,
+} = Ethereum({
+  contracts: {
+    FederationNounsPool,
+    FederationNounsGovernor,
+    FederationNounsRelayer,
+    NounsDAOLogicV3,
+  },
+  hooks: {
+    getBlockProof: async (task) => {
+      log.active(`Getting block proof for proposal end block ${task.args[1]}`);
+
+      const { hash } = await clients.mainnet.getTransaction({
+        blockNumber: task.args[1],
+        index: 0,
+      });
+
+      const receipt = await mainnetProvider.getTransactionReceipt(hash);
+
+      const { proof } = await relic.transactionProver.getProofData(receipt);
+
+      return { ...task, args: [task.args[0], proof] };
+    },
+    getMessageProof: async (task) => {
+      const messageHash = ethers.utils.keccak256(task.args[3]);
+
+      const proofInfo = await zkSyncProvider.getMessageProof(
+        task.args[5],
+        contracts.FederationNounsGovernor.deployments.zkSync,
+        messageHash
+      );
+
+      if (!proofInfo) {
+        throw new Error("No proof found");
+      }
+
+      return {
+        ...task,
+        args: [
+          task.args[0],
+          proofInfo.id,
+          task.args[2],
+          task.args[3],
+          proofInfo.proof,
+        ],
+      };
+    },
+    publishBlockHash: async (task) => {
+      log.active(`Publishing block hash to Relic for block ${task.args[1]}`);
+
+      const relic = await Relic.RelicClient.fromProvider(mainnetProvider);
+
+      // make sure theres no reorg
+      const blockHash = await mainnetProvider
+        .getBlock(Number(task.args[1]))
+        .then((b) => b.hash);
+
+      await mainnetSigner.sendTransaction(
+        await relic.bridge.sendBlock(blockHash)
+        // {} // optional gas configuration goes here
+      );
+
+      await relic.bridge.waitUntilBridged(blockHash);
+
+      return task;
     },
   },
-  NounsDAOLogicV2: {
-    abi: NounsDAOLogicV2ABI,
-    deployments: {
-      mainnet: "0x6f3E6272A167e8AcCb32072d08E0957F9c79223d",
+  scripts: {
+    publishBlockHash: async (block: number) => {
+      const relic = await Relic.RelicClient.fromProvider(mainnetProvider);
+
+      // make sure theres no reorg
+      const blockHash = await mainnetProvider
+        .getBlock(block)
+        .then((b) => b.hash);
+
+      await mainnetSigner.sendTransaction(
+        await relic.bridge.sendBlock(blockHash)
+        // {} // optional gas configuration goes here
+      );
+
+      await relic.bridge.waitUntilBridged(blockHash);
     },
   },
+  privateKey: process.env.ETHEREUM_PRIVATE_KEY as string,
 });
 
+// Governance Pools
 watch(
-  { contract: "NounsPool", chain: "mainnet", event: "BidPlaced" },
+  { contract: "FederationNounsPool", chain: "mainnet", event: "BidPlaced" },
   async (event) => {
-    if (!event.args.propId) return;
-
     const { auctionEndBlock } = await read({
-      contract: "NounsPool",
+      contract: "FederationNounsPool",
       chain: "mainnet",
       functionName: "getBid",
       args: [event.args.propId],
@@ -36,7 +136,7 @@ watch(
     } else {
       addTask({
         block: auctionEndBlock + 1n,
-        contract: "NounsPool",
+        contract: "FederationNounsPool",
         chain: "mainnet",
         functionName: "castVote",
         args: [event.args.propId],
@@ -44,5 +144,107 @@ watch(
         maxBaseFeeForPriority: 30,
       });
     }
+  }
+);
+
+// L2 Governance
+
+// Publish proposal startBlock hash to Relic
+watch(
+  {
+    contract: "NounsDAOLogicV3",
+    chain: "mainnet",
+    event: "ProposalCreated",
+  },
+  async (event) => {
+    schedule({
+      name: "publishBlockHash",
+      block: Number(event.args.startBlock) + 1,
+      args: [Number(event.args.startBlock)],
+    });
+  }
+);
+
+// Governor
+watch(
+  {
+    contract: "FederationNounsGovernor",
+    chain: "zkSync",
+    event: "VoteCast",
+  },
+  async (event) => {
+    const [, , , , , , , , , , , castWindow, finalityBlocks] = await read({
+      contract: "FederationNounsGovernor",
+      chain: "zkSync",
+      functionName: "config",
+    });
+
+    const { endBlock } = await read({
+      contract: "FederationNounsGovernor",
+      chain: "zkSync",
+      functionName: "getProposal",
+      args: [event.args.proposal],
+    });
+
+    addTask({
+      block: endBlock - (castWindow + finalityBlocks) + 1n,
+      hooks: ["getBlockProof"],
+      contract: "FederationNounsGovernor",
+      chain: "zkSync",
+      functionName: "settleVotes",
+      // @ts-ignore
+      args: [event.args.proposal, endBlock],
+    });
+  }
+);
+
+// Relayer
+watch(
+  {
+    contract: "FederationNounsGovernor",
+    chain: "zkSync",
+    event: "VotesSettled",
+  },
+  async (event) => {
+    const [, , , , , , , , , , , , finalityBlocks] = await read({
+      contract: "FederationNounsGovernor",
+      chain: "zkSync",
+      functionName: "config",
+    });
+
+    const { l1BatchNumber, l1BatchTxIndex, blockNumber } =
+      await zkSyncProvider.getTransactionReceipt(event.transactionHash);
+
+    const encodedMessage = ethers.utils.AbiCoder.prototype.encode(
+      ["uint256", "uint256", "uint256", "uint256"],
+      [
+        Number(event.args.proposal),
+        Number(event.args.forVotes),
+        Number(event.args.againstVotes),
+        Number(event.args.abstainVotes),
+      ]
+    ) as `0x${string}`;
+
+    const proof = {
+      id: 0n, // Overriden by hook
+      proof: ["0xPROOF"], // Overriden by hook
+    } as const;
+
+    addTask({
+      block: event.blockNumber + finalityBlocks,
+      hooks: ["getMessageProof"],
+      contract: "FederationNounsRelayer",
+      chain: "mainnet",
+      functionName: "relayVotes",
+      args: [
+        BigInt(l1BatchNumber),
+        proof.id,
+        l1BatchTxIndex,
+        encodedMessage,
+        proof.proof,
+        //@ts-ignore
+        blockNumber,
+      ],
+    });
   }
 );
